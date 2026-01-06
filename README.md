@@ -80,57 +80,57 @@ The MCP server will auto-install via `npx` on first run. Start asking questions:
 
 ---
 
-## Real Workflow Examples
+## What People Build With It
+
+**The MCP server provides the data infrastructure.** Pair it with automation tools (cron, n8n, custom scripts) to build workflows like these:
 
 ### Daily Anomaly Detection
 
-```
-Agent runs every morning at 9 AM:
-1. Pull yesterday's performance via get_campaign_performance()
-2. Compare to 7-day average
-3. Flag campaigns with spend +30% or ACOS +15%
-4. Post Slack notification with root cause analysis
+**What you can build:**
+- Pull yesterday's performance and compare to 7-day baseline
+- Flag campaigns with spend +30% or ACOS +15%
+- Surface root cause analysis (bid changes, new competitors, etc.)
 
-Result: Catch budget overspends before they compound.
-```
+**Requires:** Scheduling tool (cron, n8n, etc.) + notification system (Slack, email)
 
-### Client Narrative Reports
+**Impact:** Catch budget overspends before they compound.
 
-```
-Weekly automation:
-1. list_campaigns() → get all campaign data
-2. Send to GPT-4 with prompt: "Write client-friendly summary"
-3. Generate PDF with charts
-4. Email to client
+### Client Reporting Automation
 
-Result: Replaces 2 hours of analyst work per client.
-```
+**What you can build:**
+- Query all campaign data via `list_campaigns()` and `get_campaign_performance()`
+- Have Claude generate client-friendly narrative summaries
+- Export to PDF or Google Docs
 
-### Search Term Harvesting
+**Requires:** Scheduling + document generation library
 
-```
-Daily scan:
-1. Pull high-converting search terms (CVR > 5%)
-2. Check if already exists as exact match keyword
-3. If new + spend potential > $50/day → create keyword
-4. Send approval request to human
-
-Result: Automated keyword expansion from top performers.
-```
+**Impact:** Replace 2 hours of analyst work per client, per week.
 
 ### Wasted Spend Alerts
 
-```
-Weekly digest:
-1. list_keywords(status: "enabled", min_spend: 100)
-2. Filter: spend > $100, zero sales in 14 days
-3. Rank by wasted budget
-4. Email with pause recommendations
+**What you can build:**
+- Pull all enabled keywords with `list_keywords()`
+- Filter for spend >$100 with zero conversions in 14 days
+- Generate pause recommendations ranked by wasted budget
 
-Result: Identify $500-2000/week in wasted spend per account.
-```
+**Requires:** Scheduling + notification system
 
-See [examples/](./examples) folder for full implementation guides.
+**Impact:** Identify $500-2000/week in wasted spend per account.
+
+### Performance Monitoring Dashboard
+
+**What you can build:**
+- Pull real-time campaign metrics via `get_campaign_performance()`
+- Display ROAS, ACOS, spend trends in custom dashboards
+- Set up alerts for metric thresholds
+
+**Requires:** Dashboard framework (React, Streamlit, etc.) + data visualization
+
+**Impact:** Real-time visibility without logging into Amazon Ads.
+
+---
+
+**Implementation guides:** See [examples/](./examples) for code samples with cron, n8n, and custom scripts.
 
 ---
 
