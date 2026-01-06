@@ -1,0 +1,47 @@
+{
+  "name": "ppc-prophet-mcp",
+  "version": "1.0.0",
+  "description": "MCP Server for Amazon Ads management via PPC Prophet - manage campaigns, keywords, and bids through Claude",
+  "type": "module",
+  "main": "build/index.js",
+  "bin": {
+    "ppc-prophet-mcp": "build/index.js"
+  },
+  "files": [
+    "build",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node build/index.js",
+    "inspect": "npx @modelcontextprotocol/inspector node build/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "amazon-ads",
+    "amazon-advertising",
+    "sponsored-products",
+    "sponsored-brands",
+    "ppc",
+    "advertising",
+    "claude",
+    "ai-assistant"
+  ],
+  "author": "PPC Prophet",
+  "license": "MIT",
+  "homepage": "https://ppcgpt.com",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
+  }
+}

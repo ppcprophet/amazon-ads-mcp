@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "ppc-prophet": {
+      "command": "node",
+      "args": ["/Users/philmccarty/PhpstormProjects/ppcpl9b/mcp-server/build/index.js"],
+      "env": {
+        "PPC_PROPHET_API_URL": "http://localhost:8000",
+        "PPC_PROPHET_API_KEY": "REPLACE_WITH_YOUR_SANCTUM_TOKEN",
+        "PPC_PROPHET_DEFAULT_PROFILE_ID": ""
+      }
+    }
+  }
+}

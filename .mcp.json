@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "ppc-prophet": {
+      "command": "node",
+      "args": ["build/index.js"],
+      "env": {
+        "PPC_PROPHET_API_URL": "http://localhost:8000",
+        "PPC_PROPHET_API_KEY": "11|AJxLzwWNKy42ExIblGz2QGeN1p5BDjlwOha68SaJ"
+      }
+    }
+  }
+}
