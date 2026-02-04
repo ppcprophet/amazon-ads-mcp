@@ -1,309 +1,157 @@
-# PPC Prophet MCP Server
+# Amazon Advertising MCP Server
 
-**MCP server for Amazon Advertising.** Let AI agents read and act on your campaigns, keywords, and performance data.
+Connect AI assistants to your Amazon Advertising data. Query campaign performance, find wasted spend, diagnose metric changes, and monitor automation rules—all through natural language.
 
-Built for consultants, agencies, and power users who need programmatic access to Amazon Ads. Not a dashboard—infrastructure.
+[![Official MCP Registry](https://img.shields.io/badge/MCP%20Registry-Listed-green)](https://registry.modelcontextprotocol.io/)
+[![Transport](https://img.shields.io/badge/Transport-Streamable%20HTTP-blue)]()
 
-[![npm version](https://img.shields.io/npm/v/@ppcprophet/mcp-server)](https://www.npmjs.com/package/@ppcprophet/mcp-server)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+## What is this?
 
----
+PPC Prophet MCP is a **hosted Model Context Protocol server** that gives AI assistants (Claude, ChatGPT, Cursor, etc.) direct access to your Amazon Advertising data. No local installation required—just connect and query.
+
+This is **infrastructure for AI agents**, not a dashboard. It enables:
+- Natural language queries against your Amazon Ads data
+- Automated reporting and alerting workflows
+- AI-powered PPC optimization agents
+- Integration with any MCP-compatible client
+
+## Features
+
+### 27+ Tools for Amazon Advertising
+
+**Performance Analytics**
+- `get_campaign_performance` - Campaign metrics with flexible sorting (sales, ROAS, ACOS, spend, clicks)
+- `get_search_term_performance` - Search term analysis sorted by any KPI
+- `get_asin_performance` - Product-level performance metrics
+- `get_match_type_performance` - Compare exact, phrase, broad, and auto targeting
+- `get_dayofweek_performance` - Identify best/worst performing days
+- `get_platform_performance` - SP vs SB vs SD breakdown
+- `compare_periods` - Week-over-week, month-over-month analysis
+
+**Wasted Spend Analysis**
+- `get_wasted_spend` - Find campaigns, keywords, or search terms spending without converting
+- Customizable thresholds and result limits
+- Campaign, keyword, and search term level analysis
+
+**Root Cause Diagnosis**
+- `diagnose_change` - Answer "Why did my ACOS/Sales/Spend change?"
+- Drill down from account → campaign → keyword level
+- Factor decomposition (CPC, CVR, AOV impact)
+- Bid/budget change correlation
+
+**Campaign Management**
+- `list_campaigns`, `get_campaign`, `search_campaigns`
+- `update_campaign_status`, `update_campaign_budget`
+- `list_keywords`, `update_keyword_bid`, `update_keyword_status`
+
+**Rules & Automation** (PPC Prophet subscribers)
+- `list_rules` - View automation rules
+- `get_rule_details` - Rule configuration and filters
+- `get_rule_outcomes` - Execution history
+- `get_recent_rule_activity` - Monitor automation across profiles
+
+**Profile Management**
+- `list_profiles`, `get_profile`, `set_current_profile`
+- `list_mcp_profiles`, `activate_mcp_profile`, `check_mcp_status`
+
+### MCP Apps (Interactive Widgets)
+
+Rich visualizations rendered directly in Claude:
+- **Wasted Spend Analyzer** - Visual charts with sortable tables
+- **Campaign Performance Dashboard** - Metrics overview with comparisons
+- **Diagnose Change** - Waterfall charts showing contribution breakdown
 
 ## Quick Start
 
-### 1. Get API Token
+### 1. Get Your API Token
 
-Sign up at **[ppcgpt.com](https://ppcgpt.com)** and generate an MCP token (free for read-only access).
+1. Sign up at [ppcgpt.getppcprophet.com/register](https://ppcgpt.getppcprophet.com/register)
+2. Connect your Amazon Advertising account
+3. Generate an API token at [ppcgpt.getppcprophet.com/mcp](https://ppcgpt.getppcprophet.com/mcp)
 
-### 2. Add to Claude Desktop
+### 2. Configure Your MCP Client
 
-Edit your Claude Desktop config file:
+**Claude Desktop / Claude Code (Recommended)**
 
-**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+Run this command in your terminal:
+
+```bash
+claude mcp add ppc-prophet \
+  --transport http \
+  --header "Authorization: Bearer YOUR_TOKEN_HERE" \
+  https://ppcgpt.getppcprophet.com/mcp
+```
+
+**Manual Configuration**
+
+Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 
 ```json
 {
   "mcpServers": {
     "ppc-prophet": {
-      "command": "npx",
-      "args": ["-y", "@ppcprophet/mcp-server"],
-      "env": {
-        "PPC_PROPHET_API_TOKEN": "your_token_here",
-        "PPC_PROPHET_API_URL": "https://ppcgpt.getppcprophet.com"
+      "url": "https://ppcgpt.getppcprophet.com/mcp",
+      "transport": "streamable-http",
+      "headers": {
+        "Authorization": "Bearer YOUR_TOKEN_HERE"
       }
     }
   }
 }
 ```
 
-### 3. Restart Claude Desktop
-
-The MCP server will auto-install via `npx` on first run. Start asking questions:
+### 3. Start Querying
 
 ```
-"Show me my top 5 campaigns by ROAS last month"
-"Which keywords have spend > $100 but zero sales?"
-"List all campaigns with ACOS above 50%"
+"Show me wasted spend on keywords"
+"Which campaigns have the best ROAS?"
+"Why did my ACOS increase this week?"
+"Compare last week to the week before"
 ```
 
----
+## Example Queries
 
-## What's Included
+| Query | What It Does |
+|-------|-------------|
+| "Show me top 10 campaigns by sales" | Campaign performance ranked by revenue |
+| "Which keywords are losing money?" | Keywords with spend but no conversions |
+| "Why did my ACOS spike?" | Root cause analysis with driver attribution |
+| "Compare this month to last month" | Period-over-period metrics comparison |
+| "What search terms should I add as negatives?" | Non-converting search terms |
+| "Show me day of week breakdown" | Performance by Monday-Sunday |
+| "Which match type performs best?" | Exact vs phrase vs broad comparison |
 
-### 17 MCP Tools (Read-Only)
+## Technical Details
 
-#### Profile Management
-- `list_profiles` - List all connected Amazon Ads profiles
-- `set_current_profile` - Switch active profile context
-- `list_mcp_profiles` - View MCP activation status
-- `activate_mcp_profile` - Enable profile for querying
-- `check_mcp_status` - Check data import progress
+- **Transport**: Streamable HTTP (also supports SSE)
+- **Authentication**: Bearer token via Authorization header
+- **Data Range**: Last 90 days of performance data
+- **Response Time**: Sub-100ms for most queries
 
-#### Campaign Analytics
-- `list_campaigns` - List campaigns with filtering (status, type, spend)
-- `get_campaign` - Get detailed campaign info
-- `get_campaign_performance` - Performance metrics with date ranges
-- `search_campaigns` - Search campaigns by name
+## Documentation
 
-#### Keyword Analytics
-- `list_keywords` - List keywords with filtering (match type, status, spend)
-- `update_keyword_bid` - Update keyword bid (write access)
-- `update_keyword_status` - Pause/enable keywords (write access)
+- **Full Query Reference**: [ppcgpt.getppcprophet.com/docs/queries](https://ppcgpt.getppcprophet.com/docs/queries)
+- **Landing Page**: [ppcgpt.getppcprophet.com](https://ppcgpt.getppcprophet.com/)
+- **MCP Setup Guide**: [ppcgpt.getppcprophet.com/mcp](https://ppcgpt.getppcprophet.com/mcp)
 
-#### Performance Data
-- `get_performance` - Aggregate performance across campaigns
-- 90 days of historical data
-- Query speed: <100ms average
+## Registry Listings
 
-**Write access tools** (update campaigns, bids, budgets) available on paid plans.
-
----
-
-## What People Build With It
-
-**The MCP server provides the data infrastructure.** Pair it with automation tools (cron, n8n, custom scripts) to build workflows like these:
-
-### Daily Anomaly Detection
-
-**What you can build:**
-- Pull yesterday's performance and compare to 7-day baseline
-- Flag campaigns with spend +30% or ACOS +15%
-- Surface root cause analysis (bid changes, new competitors, etc.)
-
-**Requires:** Scheduling tool (cron, n8n, etc.) + notification system (Slack, email)
-
-**Impact:** Catch budget overspends before they compound.
-
-### Client Reporting Automation
-
-**What you can build:**
-- Query all campaign data via `list_campaigns()` and `get_campaign_performance()`
-- Have Claude generate client-friendly narrative summaries
-- Export to PDF or Google Docs
-
-**Requires:** Scheduling + document generation library
-
-**Impact:** Replace 2 hours of analyst work per client, per week.
-
-### Wasted Spend Alerts
-
-**What you can build:**
-- Pull all enabled keywords with `list_keywords()`
-- Filter for spend >$100 with zero conversions in 14 days
-- Generate pause recommendations ranked by wasted budget
-
-**Requires:** Scheduling + notification system
-
-**Impact:** Identify $500-2000/week in wasted spend per account.
-
-### Performance Monitoring Dashboard
-
-**What you can build:**
-- Pull real-time campaign metrics via `get_campaign_performance()`
-- Display ROAS, ACOS, spend trends in custom dashboards
-- Set up alerts for metric thresholds
-
-**Requires:** Dashboard framework (React, Streamlit, etc.) + data visualization
-
-**Impact:** Real-time visibility without logging into Amazon Ads.
-
----
-
-**Implementation guides:** See [examples/](./examples) for code samples with cron, n8n, and custom scripts.
-
----
-
-## How It Works
-
-### Architecture
-
-```
-Claude Desktop (or any MCP client)
-    ↓
-@ppcprophet/mcp-server (this package)
-    ↓
-PPC Prophet API (Amazon Ads data)
-    ↓
-Amazon Advertising API
-```
-
-### MCP Tools → API Calls
-
-When you ask Claude:
-> "Show me campaigns with ROAS > 5x"
-
-Claude calls:
-```typescript
-get_campaign_performance({
-  start_date: "2024-01-01",
-  end_date: "2024-01-31",
-  sort_by: "roas",
-  order: "desc"
-})
-```
-
-The MCP server translates this to an API request, returns structured data, and Claude formats it naturally.
-
-### Data Flow
-
-1. **Activation**: Connect Amazon Ads account via OAuth
-2. **Import**: Background job pulls 90 days of campaign/keyword/performance data
-3. **Index**: Data indexed for fast querying
-4. **Query**: MCP server → API → Results in <100ms
-5. **Refresh**: Daily sync keeps data current
-
----
-
-## Supported MCP Clients
-
-- ✅ **Claude Desktop** (Anthropic)
-- ✅ **ChatGPT** (OpenAI, via MCP bridge)
-- ✅ **Cursor** (AI code editor)
-- ✅ **Cline** (VS Code extension)
-- ✅ **Custom agents** (any MCP-compatible client)
-
----
-
-## API Authentication
-
-Uses Laravel Sanctum tokens:
-- Each token is unique (supports multiple devices)
-- Scoped permissions (`mcp:read`, `mcp:write`)
-- Revocable from dashboard
-- Profile-level access control
-
----
+- [Official MCP Registry](https://registry.modelcontextprotocol.io/) - `io.github.philmccarty/amazon-advertising-ppc-prophet`
+- [Glama / awesome-mcp-servers](https://glama.ai/mcp/servers)
 
 ## Pricing
 
-### Free (Read-Only)
-- 1 Amazon Ads profile
-- All 17 read-only tools
-- 100 API calls/day
-- 90 days historical data
-- Perfect for analytics and reporting agents
-
-### Pro ($99/mo)
-- 5 profiles
-- Read + write tools (campaign management, bid updates)
-- 1,000 API calls/day
-- Priority support
-
-### Enterprise (Custom)
-- Unlimited profiles
-- White-label deployment
-- Custom MCP tools
-- SLA guarantees
-
-[Get access →](https://ppcgpt.com)
-
----
-
-## TypeScript Types
-
-Full type definitions included:
-
-```typescript
-interface CampaignPerformance {
-  profile_id: string;
-  campaign_id: string;
-  campaign_name: string;
-  status: "enabled" | "paused" | "archived";
-  targeting_type: "auto" | "manual";
-  sales: number;
-  spend: number;
-  impressions: number;
-  clicks: number;
-  conversions: number;
-  acos: number;
-  roas: number;
-  ctr: number;
-  cpc: number;
-}
-```
-
-See [types/index.d.ts](./types/index.d.ts) for full definitions.
-
----
-
-## Roadmap
-
-- [x] Read-only MCP tools (campaigns, keywords, performance)
-- [x] Multi-profile support
-- [x] Fast data indexing (90-day historical data)
-- [ ] Write access (campaign management, bid updates) - Q1 2026
-- [ ] Search term reporting
-- [ ] Advanced filtering (product targeting, placements)
-- [ ] Budget recommendation engine
-- [ ] Negative keyword suggestions
-
----
+| Plan | Profiles | Features | API Calls |
+|------|----------|----------|-----------|
+| Free | 1 | Read-only tools | 100/day |
+| Pro ($99/mo) | 5 | Full access + write tools | Unlimited |
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/ppcprophet/mcp-server/issues)
-- **Email**: hello@getppcprophet.com
-- **Docs**: [getppcprophet.com/docs](https://getppcprophet.com/docs)
-
----
-
-## FAQ
-
-### Do I need to install anything?
-
-No. The `npx` command auto-downloads and runs the MCP server. Just add the config and restart Claude.
-
-### Is my Amazon Ads data secure?
-
-Yes. Authentication is via Sanctum tokens (no passwords stored). Data is encrypted in transit and at rest. You can revoke access anytime from the dashboard.
-
-### Can I use this with ChatGPT?
-
-Yes, via MCP bridge tools. See [examples/chatgpt-setup.md](./examples/chatgpt-setup.md).
-
-### What if I manage multiple Amazon accounts?
-
-Activate each profile separately. Use `set_current_profile` to switch context, or specify `profile_id` in each tool call.
-
-### Is the code open source?
-
-The npm package and examples are public. The backend API is proprietary (handles Amazon Ads API integration, data indexing, etc.).
-
----
+- **Documentation**: [ppcgpt.getppcprophet.com/docs/queries](https://ppcgpt.getppcprophet.com/docs/queries)
+- **Email**: support@getppcprophet.com
+- **Main Platform**: [app.getppcprophet.com](https://app.getppcprophet.com/)
 
 ## License
 
-MIT License - See [LICENSE](./LICENSE)
-
----
-
-## Links
-
-- **Website**: [getppcprophet.com](https://getppcprophet.com)
-- **npm**: [@ppcprophet/mcp-server](https://www.npmjs.com/package/@ppcprophet/mcp-server)
-- **Changelog**: [CHANGELOG.md](./CHANGELOG.md)
-
----
-
-**Built by Amazon Ads specialists.** Not affiliated with Amazon.
+Proprietary - Requires PPC Prophet account for access.
