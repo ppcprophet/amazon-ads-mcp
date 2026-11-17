@@ -43,7 +43,7 @@ Paste this configuration into the file:
       "command": "npx",
       "args": ["-y", "@ppcprophet/mcp-server"],
       "env": {
-        "PPC_PROPHET_API_TOKEN": "your_token_here",
+        "PPC_PROPHET_API_KEY": "your_token_here",
         "PPC_PROPHET_API_URL": "https://ppcgpt.getppcprophet.com"
       }
     }
@@ -68,7 +68,7 @@ If you already have other MCP servers configured, just add `ppc-prophet` to the 
       "command": "npx",
       "args": ["-y", "@ppcprophet/mcp-server"],
       "env": {
-        "PPC_PROPHET_API_TOKEN": "your_token_here",
+        "PPC_PROPHET_API_KEY": "your_token_here",
         "PPC_PROPHET_API_URL": "https://ppcgpt.getppcprophet.com"
       }
     }
@@ -168,7 +168,7 @@ If you're using a self-hosted PPC Prophet instance:
       "command": "npx",
       "args": ["-y", "@ppcprophet/mcp-server"],
       "env": {
-        "PPC_PROPHET_API_TOKEN": "your_token_here",
+        "PPC_PROPHET_API_KEY": "your_token_here",
         "PPC_PROPHET_API_URL": "https://your-domain.com"
       }
     }
@@ -187,7 +187,7 @@ For development, you can run the server locally:
       "command": "node",
       "args": ["/path/to/mcp-server/dist/index.js"],
       "env": {
-        "PPC_PROPHET_API_TOKEN": "your_token_here",
+        "PPC_PROPHET_API_KEY": "your_token_here",
         "PPC_PROPHET_API_URL": "http://localhost:8000"
       }
     }
